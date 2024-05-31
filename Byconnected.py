@@ -49,18 +49,21 @@ class Graph:
                         mazas[tevas[u]] = min(mazas[tevas[u]], mazas[u])
                         if mazas[u] >= atradimo_laikas[tevas[u]]:
                             articuliacijos_taskas.add(tevas[u])
-                            komponente = []
+                            komponente = set()
                             while bcc_stackas and bcc_stackas[-1] != (tevas[u], u):
-                                komponente.append(bcc_stackas.pop())
+                                edge = bcc_stackas.pop()
+                                komponente.update(edge)
                             if bcc_stackas:
-                                komponente.append(bcc_stackas.pop())
+                                edge = bcc_stackas.pop()
+                                komponente.update(edge)
                             if len(komponente) > 0:
                                 bcc.append(komponente)
                     elif tevas[u] == -1 and vaikai > 1:
                         articuliacijos_taskas.add(u)
-                        komponente = []
+                        komponente = set()
                         while bcc_stackas:
-                            komponente.append(bcc_stackas.pop())
+                            edge = bcc_stackas.pop()
+                            komponente.update(edge)
                         if len(komponente) > 0:
                             bcc.append(komponente)
 
@@ -69,12 +72,13 @@ class Graph:
             if atradimo_laikas[pradine_virsune] == -1 and self.graph[pradine_virsune]:  # pradeti DFS virsunem kurios turi kraštine
                 dfs_bcc(pradine_virsune)
                 # Jeigu dar yra likusiu kraštiniu stecke reiskiasi jos irgi yra antskira jungi komponente
-                #if bcc_stackas:
-                #    komponente = []
-                #    while bcc_stackas:
-                #        komponente.append(bcc_stackas.pop())
-                #    if len(komponente) > 0:
-                #        bcc.append(komponente)
+                if bcc_stackas:
+                    komponente = set()
+                    while bcc_stackas:
+                        edge = bcc_stackas.pop()
+                        komponente.update(edge)
+                    if len(komponente) > 0:
+                        bcc.append(komponente)
         end_time = time.time()  # End the timer
 
         print(f"Algoritmo veikimo laikas: {end_time - start_time:.6f} sekundes")
@@ -110,18 +114,18 @@ class Graph:
 
 # Example usage:
 if __name__ == "__main__":
-    specifinis_graphas = Graph.sugeneruoti_atsitiktini_grafa(20, 30)
+    specifinis_graphas = Graph.sugeneruoti_atsitiktini_grafa(1000000, 5000000)
 
-    print("Specifinio grafo kraštinės:")
-    for u in range(specifinis_graphas.virsunes):
-        for v in specifinis_graphas.graph[u]:
-           if u < v:
-                print(f"({u}, {v})")
+    #print("Specifinio grafo kraštinės:")
+    #for u in range(specifinis_graphas.virsunes):
+    #    for v in specifinis_graphas.graph[u]:
+    #       if u < v:
+    #            print(f"({u}, {v})")
 
     bcc, articuliacijos_taskas = specifinis_graphas.rasti_dvigubai_komponentes_ir_artikuliacijos_taskis()
-    print("Artikuliacijos taškai:", articuliacijos_taskas)
-    print("Dvigubai sujungtos komponentės:")
-    for komponente in bcc:
-       print(komponente)
+    #print("Artikuliacijos taškai:", articuliacijos_taskas)
+    #print("Dvigubai sujungtos komponentės (viršūnės):")
+    #for komponente in bcc:
+    #   print(komponente)
 
-    Graph.draw_graph(specifinis_graphas)
+    #Graph.draw_graph(specifinis_graphas)
